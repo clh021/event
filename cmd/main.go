@@ -32,10 +32,10 @@ func main() {
 	a := new(Actor)
 
 	// 注册名为OnSkill的回调
-	e.Register("OnSkill", a.OnEvent)
+	e.RegisterWithPriority("OnSkill", a.OnEvent, 300)
 
 	// 再次在OnSkill上注册全局事件
-	e.Register("OnSkill", GlobalEvent)
+	e.RegisterWithPriority("OnSkill", GlobalEvent, 900)
 
 	// 调用事件，所有注册的同名函数都会被调用
 	e.Call("OnSkill", 100)
