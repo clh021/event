@@ -2,6 +2,7 @@ package event
 
 import (
 	"sort"
+	"strings"
 )
 
 type event struct {
@@ -35,10 +36,28 @@ func New() *EventService {
 	}
 }
 
+// 根据触发事件名取出符合监听规则的事件函数列表
+// TODO: 支持结尾通配符
+func (s *EventService) list(name string) events {
+	var list events
+	// handle map keys
+	for kname, e := range s.handle {
+		if strings.HasSuffix(kname, "*") {
+			matchName := strings.TrimRight(kname, "*")
+			if strings.HasPrefix(kname, matchName) {
+				list = append(list, e...)
+			}
+		} else if kname == name {
+			list = append(list, e...)
+		}
+	}
+	return list
+}
+
 // 调用事件
 func (s *EventService) Call(name string, param interface{}) {
 	// 通过名字找到事件列表
-	list := s.handle[name]
+	list := s.list(name)
 	sort.Sort(events(list))
 
 	// 遍历这个事件的所有回调

@@ -31,12 +31,14 @@ func main() {
 	// 实例化一个角色
 	a := new(Actor)
 
-	// 注册名为OnSkill的回调
-	e.RegisterWithPriority("OnSkill", a.OnEvent, 300)
+	// 注册名为 `app.service1.event1` 的回调
+	e.RegisterWithPriority("app.service1.event1", a.OnEvent, 300)
 
-	// 再次在OnSkill上注册全局事件
-	e.RegisterWithPriority("OnSkill", GlobalEvent, 900)
+	// 再次在 `app.service1.event1` 上注册全局事件
+	e.RegisterWithPriority("app.service1.event2", GlobalEvent, 900)
+
+	e.RegisterWithPriority("app.service1.*", GlobalEvent, 100)
 
 	// 调用事件，所有注册的同名函数都会被调用
-	e.Call("OnSkill", 100)
+	e.Call("app.service1.event1", 100)
 }
