@@ -20,6 +20,11 @@ func GlobalEvent(param interface{}, callParam interface{}) {
 	fmt.Println("global event:", param, callParam)
 }
 
+// 全局事件
+func funcEvent(param interface{}, callParam interface{}) {
+	fmt.Println("===>funcEvent:", param, callParam)
+}
+
 // 支持启动时显示构建日期和构建版本
 // 需要通过命令 ` go build -ldflags "-X main.build=`git rev-parse HEAD`" ` 打包
 var build = "not set"
@@ -43,6 +48,18 @@ func main() {
 		Priority: 100,
 		Callback: GlobalEvent,
 		Param:    22.111,
+	})
+
+	e.Register("before.app.service1.event2", event.Event{
+		Priority: 100,
+		Callback: funcEvent,
+		Param:    "before",
+	})
+
+	e.Register("after.app.service1.event2", event.Event{
+		Priority: 100,
+		Callback: funcEvent,
+		Param:    "after",
 	})
 
 	e.Register("app.service1.*", event.Event{

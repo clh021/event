@@ -1,6 +1,7 @@
 package event
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -44,7 +45,7 @@ func (s *EventService) list(name string) events {
 	for kname, e := range s.handle {
 		if strings.HasSuffix(kname, "*") {
 			matchName := strings.TrimRight(kname, "*")
-			if strings.HasPrefix(kname, matchName) {
+			if strings.HasPrefix(name, matchName) {
 				list = append(list, e...)
 			}
 		} else if kname == name {
@@ -54,8 +55,14 @@ func (s *EventService) list(name string) events {
 	return list
 }
 
-// 调用事件
 func (s *EventService) Call(name string, callParam interface{}) {
+	s.call(fmt.Sprintf("before.%s", name), callParam)
+	s.call(name, callParam)
+	s.call(fmt.Sprintf("after.%s", name), callParam)
+}
+
+// 调用事件
+func (s *EventService) call(name string, callParam interface{}) {
 	// 通过名字找到事件列表
 	list := s.list(name)
 	sort.Sort(events(list))
